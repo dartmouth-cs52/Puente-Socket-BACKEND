@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  language  String
+  createdAt DateTime @default(now())
+  lessons   Lesson[]
+}
+
+model Lesson {
+  id          Int      @id @default(autoincrement())
+  topic       String
+  durationMin Int
+  userId      Int
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum CoLearningSessionStatus {
+  waiting
+  active
+  completed
+}
+
+model CoLearningScriptLesson {
+  scriptId  Int                    @id
+  title     String
+  topic     String
+  objective String?
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+  lines     CoLearningScriptLine[]
+  sessions  CoLearningSession[]
+}
+
+model CoLearningScriptLine {
+  lineId            String                 @id @default(cuid())
+  scriptId          Int
+  lineNumber        Int
+  speaker           String
+  text              String
+  translation       String?
+  pronunciationHint String?
+  createdAt         DateTime               @default(now())
+  script            CoLearningScriptLesson @relation(fields: [scriptId], references: [scriptId], onDelete: Cascade)
+
+  @@unique([scriptId, lineNumber])
+  @@index([scriptId, lineNumber])
+}
+
+model CoLearningSession {
+  sessionId    String                  @id
+  roomCode     String                  @unique
+  topic        String
+  status       CoLearningSessionStatus @default(waiting)
+  scriptId     Int?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+  script       CoLearningScriptLesson? @relation(fields: [scriptId], references: [scriptId], onDelete: SetNull)
+  participants CoLearningParticipant[]
+  turns        CoLearningTurn[]
+}
+
+model CoLearningParticipant {
+  participantId String            @id @default(cuid())
+  sessionId     String
+  userId        String
+  displayName   String
+  joinedAt      DateTime          @default(now())
+  session       CoLearningSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
+}
+
+model CoLearningTurn {
+  turnId        String            @id @default(cuid())
+  sessionId     String
+  userId        String
+  inputText     String
+  inputLanguage String
+  feedbackScore Float?
+  feedbackNotes Json?
+  createdAt     DateTime          @default(now())
+  session       CoLearningSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
+}
