@@ -10,29 +10,29 @@ import * as game from './controllers/gameRoomController.js'
 
 // init app and port
 const app = express();
-const PORT = Number(process.env.PORT || 3000);
+// const PORT = Number(process.env.PORT || 3000);
 const server = createServer(app);
 
 // need to use cors to allow a specific url to connect
-const io = new Server(3001, {
+const io = new Server(server, {
   cors: {
     origin: 'http://localhost:5173'
   }
 })
 
 // set up cors, morgan, json middleware
-app.use(cors())
-app.use(morgan('dev'))
-app.use(express.json())
+// app.use(cors())
+// app.use(morgan('dev'))
+// app.use(express.json())
 
 // link router to base url
-app.use('/', router)
+// app.use('/', router)
 
 // basic fallback error handler
-app.use((err, _req, res, _next) => {
-  console.error(err);
-  res.status( err.status || 500).json({ error: (err.message || 'Unexpected server error') });
-});
+// app.use((err, _req, res, _next) => {
+//   console.error(err);
+//   res.status( err.status || 500).json({ error: (err.message || 'Unexpected server error') });
+// });
 
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
@@ -87,6 +87,6 @@ io.on('connection', (socket) => {
 // // io.listen(PORT)
 
 // set server to listen on port
-server.listen(PORT, () => {
-  console.log(`Puente API listening on port ${PORT}`);
-});
+// server.listen(PORT, () => {
+//   console.log(`Puente API listening on port ${PORT}`);
+// });
