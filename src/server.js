@@ -2,7 +2,6 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
-import router from './router.js'
 import { Server } from 'socket.io'
 import { createServer } from 'node:http'
 
