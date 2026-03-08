@@ -14,7 +14,7 @@ const server = createServer(app);
 // need to use cors to allow a specific url to connect
 const io = new Server(server, {
   cors: {
-    origin: 'https://project-puente.onrender.com/'
+    origin: 'https://project-puente.onrender.com'
   }
 })
 
