@@ -13,13 +13,15 @@ export function setLesson(data) {
     let scriptData = data[1]
     let title = scriptData.title
     let lines = scriptData.lines
+    let description = scriptData.description || script.objective || ''
 
     sessions[code] = {
         script: lines,
         title: title,
         code: code,
         currLine: 0,
-        status: 'in progress'
+        status: 'in progress',
+        description: description
     }
 
     return sessions[code]
